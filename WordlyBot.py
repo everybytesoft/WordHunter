@@ -6,26 +6,26 @@ from Image import svg_grid
 class WordlyBot(telebot.TeleBot):
     def __init__(self, token):
         super().__init__(token)
-        word = ""
-        word_for_check = ""
-        b = 0
-        letters_in_word = []
-        letters_not_in_word = []
-        letters_is_not_used = [
+        self.word = ""
+        self.word_for_check = ""
+        self.b = 0
+        self.letters_in_word = []
+        self.letters_not_in_word = []
+        self.letters_is_not_used = [
             "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
             "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
             "ы", "ь", "э", "ю", "я"
         ]
-        list_of_words = []
-        data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+        self.list_of_words = []
+        self.data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                 [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                 [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                 [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                 [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                 [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
-        d = 0
-        c = 0
-        list_of_used_words = []
+        self.d = 0
+        self.c = 0
+        self.list_of_used_words = []
 
 
     def start_command(self, message: telebot.types.Message):
