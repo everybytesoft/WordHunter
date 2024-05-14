@@ -18,15 +18,14 @@ class WordlyBot(telebot.TeleBot):
         ]
         self.list_of_words = []
         self.data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
         self.d = 0
         self.c = 0
         self.list_of_used_words = []
-
 
     def start_command(self, message: telebot.types.Message):
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -34,43 +33,43 @@ class WordlyBot(telebot.TeleBot):
         markup.add(button)
         self.send_message(
             message.from_user.id,
-            "Добро пожаловать в наш телеграмм бот! Здесь вы можете играть в игру Worlde. Вам нужно угадать слово из 5 букв. Чтобы начать игру, нажмите на кнопку /play",
+            "добро пожаловать в наш телеграмм бот! здесь вы можете играть в игру worlde. вам нужно угадать слово из 5 букв. чтобы начать игру, нажмите на кнопку /play",
             reply_markup=markup)
         self.send_message(
-            message.from_user.id, """Обозначения: 
+            message.from_user.id, """обозначения: 
 ⬛️ - буква не входит в слово, 
 🟨 - буква есть в слове, но не в этой позиции, 
-🟩 - буква есть в слове и в этой позиции""")
-
+🟩 - буква есть в слове и в этой позиции"""
+        )
 
     def play_command(self, message: telebot.types.Message):
-      with open("data.txt", "r") as f:
-        data = f.read()
-        items = data[1:-1].split(',')
-        word = choice(items)
-      self.word = word[1:-1]
-      self.b = 0
-      self.letters_in_word = []
-      self.letters_not_in_word = []
-      self.letters_is_not_used = [
-          "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
-          "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
-          "ы", "ь", "э", "ю", "я"
-      ]
-      self.list_of_words = items
-      self.data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
-      self.d = 0
-      self.c = 0
-      self.list_of_used_words = []
-      self.send_message(
-          message.from_user.id,
-          "Слово загадано! У вас есть 6 попыток, чтобы угадать его. Напишите слово:"
-      )
+        with open("data.txt", "r") as f:
+            data = f.read()
+            items = data[1:-1].split(',')
+            word = choice(items)
+        self.word = word[1:-1]
+        self.b = 0
+        self.letters_in_word = []
+        self.letters_not_in_word = []
+        self.letters_is_not_used = [
+            "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
+            "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
+            "ы", "ь", "э", "ю", "я"
+        ]
+        self.list_of_words = items
+        self.data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                     [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
+        self.d = 0
+        self.c = 0
+        self.list_of_used_words = []
+        self.send_message(
+            message.from_user.id,
+            "слово загадано! у вас есть 6 попыток, чтобы угадать его. напишите слово:"
+        )
 
 
     def process_text_message(self, message: telebot.types.Message):
@@ -127,8 +126,10 @@ class WordlyBot(telebot.TeleBot):
                         self.letters_not_in_word.append(i)
                     if i in self.letters_is_not_used:
                         self.letters_is_not_used.remove(i)
-            for i in message_text[::-1]:
-                if i in s2 and self.word.index(i) == message_text.index(i):
+            message_text2 = message_text[::-1]
+            word2 = self.word[::-1]
+            for i in message_text2:
+                if i in s2 and word2.index(i) == message_text2.index(i):
                     Checked_Word2.append([i, 2])
                     if i not in self.letters_in_word:
                         self.letters_in_word.append(i)
@@ -153,11 +154,11 @@ class WordlyBot(telebot.TeleBot):
             if green1 > green2:
                 self.data[self.d] = Checked_Word1
             elif green1 < green2:
-                self.data[self.d] = Checked_Word2
+                self.data[self.d] = Checked_Word2[::-1]
             elif yellow1 >= yellow2:
                 self.data[self.d] = Checked_Word1
             else:
-                self.data[self.d] = Checked_Word2
+                self.data[self.d] = Checked_Word2[::-1]
             self.d += 1
             svg_grid(self.data)
             img = open('output.png', 'rb')
