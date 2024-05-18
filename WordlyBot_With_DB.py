@@ -3,12 +3,28 @@ from random import *
 from Image import svg_grid
 from sqlite3 import connect
 
+
 class WordlyBot(telebot.TeleBot):
     def __init__(self, token):
         super().__init__(token)
         self.list_of_words = []
 
     def start_command(self, message: telebot.types.Message):
+        user_id = message.from_user.id
+        with connect('sqlite (2).db') as connection:
+            my_cursor = connection.cursor()
+            query = f'SELECT id FROM WordleDataBase WHERE id = {user_id}'
+            my_cursor.execute(query)
+            rows = my_cursor.fetchall()
+            if len(rows) == 0:
+                query = f'''INSERT INTO WordleDataBase (id) 
+VALUES ({user_id})'''
+                my_cursor.execute(query)
+                connection.commit()
+                query = f'''INSERT INTO data (id) 
+VALUES ({user_id})'''
+                my_cursor.execute(query)
+                connection.commit()
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
         markup.add(button)
