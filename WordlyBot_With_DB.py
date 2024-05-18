@@ -85,8 +85,12 @@ WHERE id={user_id};"""
             row = my_cursor.fetchall()
         word = row[0][1]
         b = row[0][2]
-        letters_in_word = list(row[0][3])
-        letters_not_in_word = list(row[0][4])
+        if b == 0:
+            letters_in_word = list(row[0][3])
+            letters_not_in_word = list(row[0][4])
+        else:
+            letters_in_word = row[0][3].split(',')
+            letters_not_in_word = row[0][4].split(',')
         letters_is_not_used = row[0][5].split(',')
         d = row[0][6]
         c = row[0][7]
