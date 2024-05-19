@@ -1,3 +1,4 @@
+""" Запуск бота """
 from WordlyBot import WordlyBot
 
 
