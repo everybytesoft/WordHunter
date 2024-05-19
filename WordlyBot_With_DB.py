@@ -6,18 +6,18 @@ from sqlite3 import connect
 
 
 class WordlyBot(telebot.TeleBot):
-    def __init__(self, token):
+    def __init__(self, token) -> None:
         super().__init__(token)
-        self.list_of_words = []
+        self.list_of_words: list[str] = []
 
-    def start_command(self, message: telebot.types.Message):
+    def start_command(self, message: telebot.types.Message) -> str:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
-        user_id = message.from_user.id
+        user_id: int = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f'SELECT id FROM WordleDataBase WHERE id = {user_id}'
             my_cursor.execute(query)
-            rows = my_cursor.fetchall()
+            rows: list[tuple[int]] = my_cursor.fetchall()
             if len(rows) == 0:
                 query = f'''INSERT INTO WordleDataBase (id) 
 VALUES ({user_id})'''
@@ -41,13 +41,13 @@ VALUES ({user_id})'''
 🟩 - буква есть в слове и в этой позиции"""
         )
 
-    def play_command(self, message: telebot.types.Message):
+    def play_command(self, message: telebot.types.Message) -> str:
         """ Функция - команда запуск игры и настройка игры """
-        user_id = message.from_user.id
+        user_id: int = message.from_user.id
         with open("data.txt", "r") as f:
             data = f.read()
-            items = data[1:-1].split(',')
-            new_word = choice(items)
+            items: list[str] = data[1:-1].split(',')
+            new_word: str = choice(items)
         self.list_of_words = items
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
@@ -79,43 +79,43 @@ WHERE id={user_id};"""
         )
 
 
-    def process_text_message(self, message: telebot.types.Message):
+    def process_text_message(self, message: telebot.types.Message) -> str, image:
         """ Функция логики самой игры """
-        user_id = message.from_user.id
+        user_id: int = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f"SELECT * FROM WordleDataBase WHERE id={user_id};"
             my_cursor.execute(query)
-            row = my_cursor.fetchall()
-        word = row[0][1]
-        b = row[0][2]
+            row: list[tuple[str]] = my_cursor.fetchall()
+        word: str = row[0][1]
+        b: int = row[0][2]
         if b == 0:
-            letters_in_word = list(row[0][3])
-            letters_not_in_word = list(row[0][4])
+            letters_in_word: list[str] = list(row[0][3])
+            letters_not_in_word: list[str] = list(row[0][4])
         else:
-            letters_in_word = row[0][3].split(',')
-            letters_not_in_word = row[0][4].split(',')
-        letters_is_not_used = row[0][5].split(',')
-        d = row[0][6]
-        c = row[0][7]
-        list_of_used_words = list(row[0][8])
+            letters_in_word: list[str] = row[0][3].split(',')
+            letters_not_in_word: list[str] = row[0][4].split(',')
+        letters_is_not_used: list[str] = row[0][5].split(',')
+        d: int = row[0][6]
+        c: int = row[0][7]
+        list_of_used_words: list[str] = list(row[0][8])
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f"""SELECT word1, word2, word3, word4, word5, word6 FROM data WHERE id={user_id};"""
             my_cursor.execute(query)
-            row = my_cursor.fetchall()
-        data = list(row[0])
-        data2 = []
+            row: list[tuple[str]] = my_cursor.fetchall()
+        data: list[str] = list(row[0])
+        data2: list[str] = []
         for i in data:
             data2.append(i.split(";"))
-        data3 = []
+        data3: list[str] = []
         for i in data2:
             s = []
             for j in i:
                 s.append(j.split(","))
             data3.append(s)
-        message_text = message.text.lower()
-        word_for_check = "'" + message_text + "'"
+        message_text: str = message.text.lower()
+        word_for_check: str = "'" + message_text + "'"
         if word == "":
             self.send_message(message.from_user.id, "Игра еще не началась! Напишите /play")
         elif b == 6:
@@ -130,7 +130,7 @@ WHERE id={user_id};"""
                 data3[d][c][1] = 2
                 c += 1
             svg_grid(data3)
-            img = open('output.png', 'rb')
+            img: image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             self.send_message(message.from_user.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
             b = 6
@@ -141,14 +141,14 @@ WHERE id={user_id};"""
                 connection.commit()
         else:
             list_of_used_words.append(message_text)
-            s = list(word)
-            s2 = list(word)
-            green1 = 0
-            yellow1 = 0
-            green2 = 0
-            yellow2 = 0
-            Checked_Word1 = []
-            Checked_Word2 = []
+            s: list[str] = list(self.word)
+            s2: list[str] = list(self.word)
+            green1: int = 0
+            yellow1: int = 0
+            green2: int = 0
+            yellow2: int = 0
+            Checked_Word1: list[str, int] = []
+            Checked_Word2: list[str, int] = []
             for i in message_text:
                 if i in s and word.index(i) == message_text.index(i):
                     Checked_Word1.append([i, 2])
@@ -207,7 +207,7 @@ WHERE id={user_id};"""
                 data3[d] = Checked_Word2[::-1]
             d += 1
             svg_grid(data3)
-            img = open('output.png', 'rb')
+            img: image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             if b < 5:
                 self.send_message(message.from_user.id,
@@ -248,7 +248,7 @@ WHERE id={user_id};"""
                 connection.commit()
 
 
-    def run(self):
+    def run(self) -> None:
         """ Функция логики самой игры """
         self.register_message_handler(self.start_command, commands=["start"])
         self.register_message_handler(self.play_command, commands=["play"])
