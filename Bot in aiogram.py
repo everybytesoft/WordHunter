@@ -18,18 +18,18 @@ dp = Dispatcher()
 
 class WordlyBot:
     """ Храним данные для игры в классе """
-    word = ""
-    word_for_check = ""
-    b = 0
-    letters_in_word = []
-    letters_not_in_word = []
-    letters_is_not_used = [
+    word: str = ""
+    word_for_check: str= ""
+    b: int = 0
+    letters_in_word: list[str] = []
+    letters_not_in_word: list[str] = []
+    letters_is_not_used: list[str] = [
         "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
         "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
         "ы", "ь", "э", "ю", "я"
     ]
-    list_of_words = []
-    data = [
+    list_of_words: list[str] = []
+    data: list[str, int] = [
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
@@ -37,14 +37,14 @@ class WordlyBot:
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
     ]
-    d = 0
-    c = 0
-    list_of_used_words = []
+    d: int = 0
+    c: int = 0
+    list_of_used_words: list[str] = []
 
 
 
 @dp.message(Command("start"))
-async def start_command(message: types.Message):
+async def start_command(message: types.Message) -> str:
     """ Функция - команда приветствие пользователя и найстройка интерфейса """
     button = [[types.KeyboardButton(text="/play")]]
     markup = types.ReplyKeyboardMarkup(keyboard=button)
@@ -59,12 +59,12 @@ async def start_command(message: types.Message):
 
 
 @dp.message(Command("play"))
-async def play_command(message: types.Message):
+async def play_command(message: types.Message) -> str:
     """ Функция - команда запуск игры и настройка игры """
     with open("data.txt", "r") as f:
         data = f.read()
-        items = data[1:-1].split(',')
-        word = choice(items)
+        items: list[str] = data[1:-1].split(',')
+        word: str = choice(items)
     WordlyBot.word = word[1:-1]
     WordlyBot.b = 0
     WordlyBot.letters_in_word = []
@@ -94,7 +94,7 @@ async def play_command(message: types.Message):
 @dp.message(F.text)
 async def process_text_message(message: types.Message):
     """ Функция логики самой игры """
-    message_text = message.text.lower()
+    message_text: str = message.text.lower()
     WordlyBot.word_for_check = "'" + message_text + "'"
     if WordlyBot.word == "":
         await message.answer("Игра еще не началась! Напишите /play")
@@ -111,7 +111,7 @@ async def process_text_message(message: types.Message):
             WordlyBot.data[WordlyBot.d][WordlyBot.c][1] = 2
             WordlyBot.c += 1
         svg_grid(WordlyBot.data)
-        img = FSInputFile("output.png")
+        img: image = FSInputFile("output.png")
         await message.answer_photo(img)
         await message.answer(
             "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play"
@@ -119,14 +119,14 @@ async def process_text_message(message: types.Message):
         WordlyBot.b = 6
     else:
         WordlyBot.list_of_used_words.append(message_text)
-        s = list(WordlyBot.word)
-        s2 = list(WordlyBot.word)
-        green1 = 0
-        yellow1 = 0
-        green2 = 0
-        yellow2 = 0
-        Checked_Word1 = []
-        Checked_Word2 = []
+        s: list[str] = list(self.word)
+        s2: list[str] = list(self.word)
+        green1: int = 0
+        yellow1: int = 0
+        green2: int = 0
+        yellow2: int = 0
+        Checked_Word1: list[str, int] = []
+        Checked_Word2: list[str, int] = []
         for i in message_text:
             if i in s and WordlyBot.word.index(i) == message_text.index(i):
                 Checked_Word1.append([i, 2])
@@ -150,8 +150,8 @@ async def process_text_message(message: types.Message):
                     WordlyBot.letters_not_in_word.append(i)
                 if i in WordlyBot.letters_is_not_used:
                     WordlyBot.letters_is_not_used.remove(i)
-        message_text2 = message_text[::-1]
-        word2 = WordlyBot.word[::-1]
+        message_text2: str = message_text[::-1]
+        word2: str = WordlyBot.word[::-1]
         for i in message_text2:
             if i in s2 and word2.index(i) == message_text2.index(i):
                 Checked_Word2.append([i, 2])
@@ -185,7 +185,7 @@ async def process_text_message(message: types.Message):
             WordlyBot.data[WordlyBot.d] = Checked_Word2[::-1]
         WordlyBot.d += 1
         svg_grid(WordlyBot.data)
-        img = FSInputFile("output.png")
+        img: image = FSInputFile("output.png")
         await message.answer_photo(img)
         if WordlyBot.b < 5:
             await message.answer(
