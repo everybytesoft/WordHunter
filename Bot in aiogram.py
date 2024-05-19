@@ -1,3 +1,4 @@
+""" Основной код работы бота на aiogram """
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
@@ -16,6 +17,7 @@ dp = Dispatcher()
 
 
 class WordlyBot:
+    """ Храним данные для игры в классе """
     word = ""
     word_for_check = ""
     b = 0
@@ -40,9 +42,10 @@ class WordlyBot:
     list_of_used_words = []
 
 
-# Хэндлер на команду /start
+
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
+    """ Функция - команда приветствие пользователя и найстройка интерфейса """
     button = [[types.KeyboardButton(text="/play")]]
     markup = types.ReplyKeyboardMarkup(keyboard=button)
     await message.answer(
@@ -57,6 +60,7 @@ async def start_command(message: types.Message):
 
 @dp.message(Command("play"))
 async def play_command(message: types.Message):
+    """ Функция - команда запуск игры и настройка игры """
     with open("data.txt", "r") as f:
         data = f.read()
         items = data[1:-1].split(',')
@@ -89,6 +93,7 @@ async def play_command(message: types.Message):
 
 @dp.message(F.text)
 async def process_text_message(message: types.Message):
+    """ Функция логики самой игры """
     message_text = message.text.lower()
     WordlyBot.word_for_check = "'" + message_text + "'"
     if WordlyBot.word == "":
