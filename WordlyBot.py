@@ -1,3 +1,4 @@
+""" Основной код работы бота """
 import telebot
 from random import *
 from Image import svg_grid
@@ -28,6 +29,7 @@ class WordlyBot(telebot.TeleBot):
         self.list_of_used_words = []
 
     def start_command(self, message: telebot.types.Message):
+        """ Функция - команда приветствие пользователя и найстройка интерфейса """
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
         markup.add(button)
@@ -43,6 +45,7 @@ class WordlyBot(telebot.TeleBot):
         )
 
     def play_command(self, message: telebot.types.Message):
+        """ Функция - команда запуск игры и настройка игры """
         with open("data.txt", "r") as f:
             data = f.read()
             items = data[1:-1].split(',')
@@ -73,6 +76,7 @@ class WordlyBot(telebot.TeleBot):
 
 
     def process_text_message(self, message: telebot.types.Message):
+        """ Функция логики самой игры """
         message_text = message.text.lower()
         self.word_for_check = "'" + message_text + "'"
         if self.word == "":
@@ -180,6 +184,7 @@ class WordlyBot(telebot.TeleBot):
 
 
     def run(self):
+        """ Функция логики работы бота """
         self.register_message_handler(self.start_command, commands=["start"])
         self.register_message_handler(self.play_command, commands=["play"])
         self.register_message_handler(self.process_text_message, content_types=["text"])
