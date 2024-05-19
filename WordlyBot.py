@@ -5,30 +5,30 @@ from Image import svg_grid
 
 
 class WordlyBot(telebot.TeleBot):
-    def __init__(self, token):
+    def __init__(self, token: str) -> None:
         super().__init__(token)
-        self.word = ""
-        self.word_for_check = ""
-        self.b = 0
-        self.letters_in_word = []
-        self.letters_not_in_word = []
-        self.letters_is_not_used = [
+        self.word: str = ""
+        self.word_for_check: str = ""
+        self.b: int = 0
+        self.letters_in_word: list[str] = []
+        self.letters_not_in_word: list[str] = []
+        self.letters_is_not_used: list[str] = [
             "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
             "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
             "ы", "ь", "э", "ю", "я"
         ]
-        self.list_of_words = []
-        self.data = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+        self.list_of_words: list[str] = []
+        self.data: list[str, int] = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
-        self.d = 0
-        self.c = 0
-        self.list_of_used_words = []
+        self.d: int = 0
+        self.c: int = 0
+        self.list_of_used_words: list[str] = []
 
-    def start_command(self, message: telebot.types.Message):
+    def start_command(self, message: telebot.types.Message) -> str:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
@@ -44,12 +44,12 @@ class WordlyBot(telebot.TeleBot):
 🟩 - буква есть в слове и в этой позиции"""
         )
 
-    def play_command(self, message: telebot.types.Message):
+    def play_command(self, message: telebot.types.Message) -> str:
         """ Функция - команда запуск игры и настройка игры """
         with open("data.txt", "r") as f:
             data = f.read()
-            items = data[1:-1].split(',')
-            word = choice(items)
+            items: list[str] = data[1:-1].split(',')
+            word: str = choice(items)
         self.word = word[1:-1]
         self.b = 0
         self.letters_in_word = []
@@ -75,9 +75,9 @@ class WordlyBot(telebot.TeleBot):
         )
 
 
-    def process_text_message(self, message: telebot.types.Message):
+    def process_text_message(self, message: telebot.types.Message) -> str, image:
         """ Функция логики самой игры """
-        message_text = message.text.lower()
+        message_text: str = message.text.lower()
         self.word_for_check = "'" + message_text + "'"
         if self.word == "":
             self.send_message(message.from_user.id, "Игра еще не началась! Напишите /play")
@@ -93,20 +93,20 @@ class WordlyBot(telebot.TeleBot):
                 self.data[self.d][self.c][1] = 2
                 self.c += 1
             svg_grid(self.data)
-            img = open('output.png', 'rb')
+            img: image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             self.send_message(message.from_user.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
             self.b = 6
         else:
             self.list_of_used_words.append(message_text)
-            s = list(self.word)
-            s2 = list(self.word)
-            green1 = 0
-            yellow1 = 0
-            green2 = 0
-            yellow2 = 0
-            Checked_Word1 = []
-            Checked_Word2 = []
+            s: list[str] = list(self.word)
+            s2: list[str] = list(self.word)
+            green1: int = 0
+            yellow1: int = 0
+            green2: int = 0
+            yellow2: int = 0
+            Checked_Word1: list[str, int] = []
+            Checked_Word2: list[str, int] = []
             for i in message_text:
                 if i in s and self.word.index(i) == message_text.index(i):
                     Checked_Word1.append([i, 2])
@@ -130,8 +130,8 @@ class WordlyBot(telebot.TeleBot):
                         self.letters_not_in_word.append(i)
                     if i in self.letters_is_not_used:
                         self.letters_is_not_used.remove(i)
-            message_text2 = message_text[::-1]
-            word2 = self.word[::-1]
+            message_text2: str = message_text[::-1]
+            word2: str = self.word[::-1]
             for i in message_text2:
                 if i in s2 and word2.index(i) == message_text2.index(i):
                     Checked_Word2.append([i, 2])
@@ -165,7 +165,7 @@ class WordlyBot(telebot.TeleBot):
                 self.data[self.d] = Checked_Word2[::-1]
             self.d += 1
             svg_grid(self.data)
-            img = open('output.png', 'rb')
+            img: image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             if self.b < 5:
                 self.send_message(message.from_user.id,
@@ -183,7 +183,7 @@ class WordlyBot(telebot.TeleBot):
                                  "Чтобы начать заново, нажмите на кнопку /play")
 
 
-    def run(self):
+    def run(self) -> None:
         """ Функция логики работы бота """
         self.register_message_handler(self.start_command, commands=["start"])
         self.register_message_handler(self.play_command, commands=["play"])
