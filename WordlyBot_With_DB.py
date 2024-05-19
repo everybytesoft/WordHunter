@@ -1,3 +1,4 @@
+""" Основной код работы бота с базами данных """
 import telebot
 from random import *
 from Image import svg_grid
@@ -10,6 +11,7 @@ class WordlyBot(telebot.TeleBot):
         self.list_of_words = []
 
     def start_command(self, message: telebot.types.Message):
+        """ Функция - команда приветствие пользователя и найстройка интерфейса """
         user_id = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
@@ -40,6 +42,7 @@ VALUES ({user_id})'''
         )
 
     def play_command(self, message: telebot.types.Message):
+        """ Функция - команда запуск игры и настройка игры """
         user_id = message.from_user.id
         with open("data.txt", "r") as f:
             data = f.read()
@@ -77,6 +80,7 @@ WHERE id={user_id};"""
 
 
     def process_text_message(self, message: telebot.types.Message):
+        """ Функция логики самой игры """
         user_id = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
@@ -245,6 +249,7 @@ WHERE id={user_id};"""
 
 
     def run(self):
+        """ Функция логики самой игры """
         self.register_message_handler(self.start_command, commands=["start"])
         self.register_message_handler(self.play_command, commands=["play"])
         self.register_message_handler(self.process_text_message, content_types=["text"])
