@@ -92,7 +92,7 @@ async def play_command(message: types.Message) -> str:
 
 
 @dp.message(F.text)
-async def process_text_message(message: types.Message):
+async def process_text_message(message: types.Message) -> str, image:
     """ Функция логики самой игры """
     message_text: str = message.text.lower()
     WordlyBot.word_for_check = "'" + message_text + "'"
@@ -205,7 +205,7 @@ async def process_text_message(message: types.Message):
 
 
 # Запуск процесса поллинга новых апдейтов
-async def main():
+async def main() -> None:
     await dp.start_polling(bot)
 
 
