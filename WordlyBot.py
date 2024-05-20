@@ -1,7 +1,9 @@
 """ Основной код работы бота """
+from re import L
 import telebot
 from random import *
 from Image import svg_grid
+from typing import List
 
 
 class WordlyBot(telebot.TeleBot):
@@ -10,15 +12,15 @@ class WordlyBot(telebot.TeleBot):
         self.word: str = ""
         self.word_for_check: str = ""
         self.b: int = 0
-        self.letters_in_word: list[str] = []
-        self.letters_not_in_word: list[str] = []
-        self.letters_is_not_used: list[str] = [
+        self.letters_in_word: List[str] = []
+        self.letters_not_in_word: List[str] = []
+        self.letters_is_not_used: List[str] = [
             "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
             "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
             "ы", "ь", "э", "ю", "я"
         ]
-        self.list_of_words: list[str] = []
-        self.data: list[str, int] = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+        self.list_of_words: List[str] = []
+        self.data: List[List[List[str, int]]] = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
@@ -26,7 +28,7 @@ class WordlyBot(telebot.TeleBot):
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],]
         self.d: int = 0
         self.c: int = 0
-        self.list_of_used_words: list[str] = []
+        self.list_of_used_words: List[str] = []
 
     def start_command(self, message: telebot.types.Message) -> str:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
@@ -48,7 +50,7 @@ class WordlyBot(telebot.TeleBot):
         """ Функция - команда запуск игры и настройка игры """
         with open("data.txt", "r") as f:
             data = f.read()
-            items: list[str] = data[1:-1].split(',')
+            items: List[str] = data[1:-1].split(',')
             word: str = choice(items)
         self.word = word[1:-1]
         self.b = 0
@@ -75,7 +77,7 @@ class WordlyBot(telebot.TeleBot):
         )
 
 
-    def process_text_message(self, message: telebot.types.Message) -> str, image:
+    def process_text_message(self, message: telebot.types.Message) -> str:
         """ Функция логики самой игры """
         message_text: str = message.text.lower()
         self.word_for_check = "'" + message_text + "'"
@@ -93,20 +95,20 @@ class WordlyBot(telebot.TeleBot):
                 self.data[self.d][self.c][1] = 2
                 self.c += 1
             svg_grid(self.data)
-            img: image = open('output.png', 'rb')
+            img: Image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             self.send_message(message.from_user.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
             self.b = 6
         else:
             self.list_of_used_words.append(message_text)
-            s: list[str] = list(self.word)
-            s2: list[str] = list(self.word)
+            s: List[str] = list(self.word)
+            s2: List[str] = list(self.word)
             green1: int = 0
             yellow1: int = 0
             green2: int = 0
             yellow2: int = 0
-            Checked_Word1: list[str, int] = []
-            Checked_Word2: list[str, int] = []
+            Checked_Word1: List[str, int] = []
+            Checked_Word2: List[str, int] = []
             for i in message_text:
                 if i in s and self.word.index(i) == message_text.index(i):
                     Checked_Word1.append([i, 2])
@@ -165,7 +167,7 @@ class WordlyBot(telebot.TeleBot):
                 self.data[self.d] = Checked_Word2[::-1]
             self.d += 1
             svg_grid(self.data)
-            img: image = open('output.png', 'rb')
+            img: Image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             if self.b < 5:
                 self.send_message(message.from_user.id,
