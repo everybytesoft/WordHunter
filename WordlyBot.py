@@ -29,7 +29,7 @@ class WordlyBot(telebot.TeleBot):
         self.c: int = 0
         self.list_of_used_words: List[str] = []
 
-    def start_command(self, message: telebot.types.Message) -> str:
+    def start_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
@@ -45,7 +45,7 @@ class WordlyBot(telebot.TeleBot):
 🟩 - буква есть в слове и в этой позиции"""
         )
 
-    def play_command(self, message: telebot.types.Message) -> str:
+    def play_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда запуск игры и настройка игры """
         with open("data.txt", "r") as f:
             data = f.read()
@@ -76,7 +76,7 @@ class WordlyBot(telebot.TeleBot):
         )
 
 
-    def process_text_message(self, message: telebot.types.Message) -> str:
+    def process_text_message(self, message: telebot.types.Message) -> None:
         """ Функция логики самой игры """
         message_text: str = message.text.lower()
         self.word_for_check = "'" + message_text + "'"
