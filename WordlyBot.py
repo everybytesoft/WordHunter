@@ -2,7 +2,7 @@
 import telebot
 from random import *
 from Image import svg_grid
-from typing import List
+from typing import List, Union
 
 
 class WordlyBot(telebot.TeleBot):
@@ -19,7 +19,7 @@ class WordlyBot(telebot.TeleBot):
             "ы", "ь", "э", "ю", "я"
         ]
         self.list_of_words: List[str] = []
-        self.data: List[List[List[str, int]]] = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+        self.data: List[List[List[Union[str, int]]]] = [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
                      [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
