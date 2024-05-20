@@ -3,21 +3,21 @@ import telebot
 from random import *
 from Image import svg_grid
 from sqlite3 import connect
-
+from typing import List, Union
 
 class WordlyBot(telebot.TeleBot):
     def __init__(self, token) -> None:
         super().__init__(token)
-        self.list_of_words: list[str] = []
+        self.list_of_words: List[str] = []
 
-    def start_command(self, message: telebot.types.Message) -> str:
+    def start_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
         user_id: int = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f'SELECT id FROM WordleDataBase WHERE id = {user_id}'
             my_cursor.execute(query)
-            rows: list[tuple[int]] = my_cursor.fetchall()
+            rows: List[tuple[int]] = my_cursor.fetchall()
             if len(rows) == 0:
                 query = f'''INSERT INTO WordleDataBase (id) 
 VALUES ({user_id})'''
@@ -41,12 +41,12 @@ VALUES ({user_id})'''
 🟩 - буква есть в слове и в этой позиции"""
         )
 
-    def play_command(self, message: telebot.types.Message) -> str:
+    def play_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда запуск игры и настройка игры """
         user_id: int = message.from_user.id
         with open("data.txt", "r") as f:
             data = f.read()
-            items: list[str] = data[1:-1].split(',')
+            items: List[str] = data[1:-1].split(',')
             new_word: str = choice(items)
         self.list_of_words = items
         with connect('sqlite (2).db') as connection:
@@ -79,36 +79,36 @@ WHERE id={user_id};"""
         )
 
 
-    def process_text_message(self, message: telebot.types.Message) -> str, image:
+    def process_text_message(self, message: telebot.types.Message) -> None:
         """ Функция логики самой игры """
         user_id: int = message.from_user.id
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f"SELECT * FROM WordleDataBase WHERE id={user_id};"
             my_cursor.execute(query)
-            row: list[tuple[str]] = my_cursor.fetchall()
+            row: List[tuple[str]] = my_cursor.fetchall()
         word: str = row[0][1]
         b: int = row[0][2]
         if b == 0:
-            letters_in_word: list[str] = list(row[0][3])
-            letters_not_in_word: list[str] = list(row[0][4])
+            letters_in_word: List[str] = list(row[0][3])
+            letters_not_in_word: List[str] = list(row[0][4])
         else:
-            letters_in_word: list[str] = row[0][3].split(',')
-            letters_not_in_word: list[str] = row[0][4].split(',')
-        letters_is_not_used: list[str] = row[0][5].split(',')
+            letters_in_word: List[str] = row[0][3].split(',')
+            letters_not_in_word: List[str] = row[0][4].split(',')
+        letters_is_not_used: List[str] = row[0][5].split(',')
         d: int = row[0][6]
         c: int = row[0][7]
-        list_of_used_words: list[str] = list(row[0][8])
+        list_of_used_words: List[str] = list(row[0][8])
         with connect('sqlite (2).db') as connection:
             my_cursor = connection.cursor()
             query = f"""SELECT word1, word2, word3, word4, word5, word6 FROM data WHERE id={user_id};"""
             my_cursor.execute(query)
-            row: list[tuple[str]] = my_cursor.fetchall()
-        data: list[str] = list(row[0])
-        data2: list[str] = []
+            row: List[tuple[str]] = my_cursor.fetchall()
+        data: List[tuple[str]] = list(row[0])
+        data2: List[List[str]] = []
         for i in data:
             data2.append(i.split(";"))
-        data3: list[str] = []
+        data3: List[List[List[str]]] = []
         for i in data2:
             s = []
             for j in i:
@@ -130,7 +130,7 @@ WHERE id={user_id};"""
                 data3[d][c][1] = 2
                 c += 1
             svg_grid(data3)
-            img: image = open('output.png', 'rb')
+            img: Image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             self.send_message(message.from_user.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
             b = 6
@@ -141,14 +141,14 @@ WHERE id={user_id};"""
                 connection.commit()
         else:
             list_of_used_words.append(message_text)
-            s: list[str] = list(self.word)
-            s2: list[str] = list(self.word)
+            s: List[str] = list(word)
+            s2: List[str] = list(word)
             green1: int = 0
             yellow1: int = 0
             green2: int = 0
             yellow2: int = 0
-            Checked_Word1: list[str, int] = []
-            Checked_Word2: list[str, int] = []
+            Checked_Word1: List[Union[str, int]] = []
+            Checked_Word2: List[Union[str, int]] = []
             for i in message_text:
                 if i in s and word.index(i) == message_text.index(i):
                     Checked_Word1.append([i, 2])
@@ -172,8 +172,8 @@ WHERE id={user_id};"""
                         letters_not_in_word.append(i)
                     if i in letters_is_not_used:
                         letters_is_not_used.remove(i)
-            message_text2 = message_text[::-1]
-            word2 = word[::-1]
+            message_text2: str = message_text[::-1]
+            word2: str = word[::-1]
             for i in message_text2:
                 if i in s2 and word2.index(i) == message_text2.index(i):
                     Checked_Word2.append([i, 2])
@@ -207,7 +207,7 @@ WHERE id={user_id};"""
                 data3[d] = Checked_Word2[::-1]
             d += 1
             svg_grid(data3)
-            img: image = open('output.png', 'rb')
+            img: Image = open('output.png', 'rb')
             self.send_photo(message.from_user.id, img)
             if b < 5:
                 self.send_message(message.from_user.id,
