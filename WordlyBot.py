@@ -1,5 +1,4 @@
 """ Основной код работы бота """
-from re import L
 import telebot
 from random import *
 from Image import svg_grid
