@@ -7,6 +7,8 @@ from random import *
 from aiogram import F
 from aiogram.types import FSInputFile
 from Image import svg_grid
+from typing import List, Union
+
 
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
@@ -21,15 +23,15 @@ class WordlyBot:
     word: str = ""
     word_for_check: str= ""
     b: int = 0
-    letters_in_word: list[str] = []
-    letters_not_in_word: list[str] = []
-    letters_is_not_used: list[str] = [
+    letters_in_word: List[str] = []
+    letters_not_in_word: List[str] = []
+    letters_is_not_used: List[str] = [
         "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
         "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
         "ы", "ь", "э", "ю", "я"
     ]
-    list_of_words: list[str] = []
-    data: list[str, int] = [
+    list_of_words: List[str] = []
+    data: List[List[List[Union[str, int]]]] = [
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
         [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
@@ -39,12 +41,12 @@ class WordlyBot:
     ]
     d: int = 0
     c: int = 0
-    list_of_used_words: list[str] = []
+    list_of_used_words: List[str] = []
 
 
 
 @dp.message(Command("start"))
-async def start_command(message: types.Message) -> str:
+async def start_command(message: types.Message) -> None:
     """ Функция - команда приветствие пользователя и найстройка интерфейса """
     button = [[types.KeyboardButton(text="/play")]]
     markup = types.ReplyKeyboardMarkup(keyboard=button)
@@ -59,11 +61,11 @@ async def start_command(message: types.Message) -> str:
 
 
 @dp.message(Command("play"))
-async def play_command(message: types.Message) -> str:
+async def play_command(message: types.Message) -> None:
     """ Функция - команда запуск игры и настройка игры """
     with open("data.txt", "r") as f:
         data = f.read()
-        items: list[str] = data[1:-1].split(',')
+        items: List[str] = data[1:-1].split(',')
         word: str = choice(items)
     WordlyBot.word = word[1:-1]
     WordlyBot.b = 0
@@ -92,7 +94,7 @@ async def play_command(message: types.Message) -> str:
 
 
 @dp.message(F.text)
-async def process_text_message(message: types.Message) -> str, image:
+async def process_text_message(message: types.Message) -> None:
     """ Функция логики самой игры """
     message_text: str = message.text.lower()
     WordlyBot.word_for_check = "'" + message_text + "'"
@@ -111,7 +113,7 @@ async def process_text_message(message: types.Message) -> str, image:
             WordlyBot.data[WordlyBot.d][WordlyBot.c][1] = 2
             WordlyBot.c += 1
         svg_grid(WordlyBot.data)
-        img: image = FSInputFile("output.png")
+        img: Image = FSInputFile("output.png")
         await message.answer_photo(img)
         await message.answer(
             "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play"
@@ -119,14 +121,14 @@ async def process_text_message(message: types.Message) -> str, image:
         WordlyBot.b = 6
     else:
         WordlyBot.list_of_used_words.append(message_text)
-        s: list[str] = list(self.word)
-        s2: list[str] = list(self.word)
+        s: List[str] = list(WordlyBot.word)
+        s2: List[str] = list(WordlyBot.word)
         green1: int = 0
         yellow1: int = 0
         green2: int = 0
         yellow2: int = 0
-        Checked_Word1: list[str, int] = []
-        Checked_Word2: list[str, int] = []
+        Checked_Word1: List[Union[str, int]] = []
+        Checked_Word2: List[Union[str, int]] = []
         for i in message_text:
             if i in s and WordlyBot.word.index(i) == message_text.index(i):
                 Checked_Word1.append([i, 2])
@@ -185,7 +187,7 @@ async def process_text_message(message: types.Message) -> str, image:
             WordlyBot.data[WordlyBot.d] = Checked_Word2[::-1]
         WordlyBot.d += 1
         svg_grid(WordlyBot.data)
-        img: image = FSInputFile("output.png")
+        img: Image = FSInputFile("output.png")
         await message.answer_photo(img)
         if WordlyBot.b < 5:
             await message.answer(
