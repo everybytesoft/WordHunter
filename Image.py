@@ -1,6 +1,6 @@
 """ Этот скрипт преобразует данные в формате двумерного массива в векторное изображение в формате SVG, и затем сохраняет его как PNG. """
 import cairosvg
-
+from typing import List, Union
 
 def svg_get_opacity(text: str) -> str:
     """ Функция определяет прозрачность элемента в зависимости от текста """
@@ -12,7 +12,7 @@ def svg_square(color: int, text: str, x: int, y: int) -> str:
     return f'<rect fill="url(#{color})" x="{x * 32 + 2}" y="{y * 32 + 2}"{svg_get_opacity(text)} rx="5" width="30" height="30"/><text fill="#fff" x="{x * 32 + 1 + (32-24) * 0.6 * 2}" y="{y * 32 + 24 + 1}">{text}</text>'
 
 
-def svg_grid(data: list[str, int]) -> image:
+def svg_grid(data: List[Union[str, int]]) -> None:
     """ Функция генерирует весь SVG-код на основе данных """
     str: str = ''
     for i in range(6):
