@@ -25,22 +25,35 @@ class WordlyBot(telebot.TeleBot):
 
     def start_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
+        id = message.chat.id
+        self.Slovar[id] = ["", "", 0, [], [], [
+            "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
+            "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
+            "ы", "ь", "э", "ю", "я"
+        ], [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],], 0, 0, []]
+        markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button = telebot.types.KeyboardButton("/play")
+        button2 = telebot.types.KeyboardButton("/rules")
+        markup.add(button, button2)
+        self.send_message(
+            message.chat.id,
+            f"Здравствуй {message.chat.first_name}, добро пожаловать в WordHunter! Здесь вы можете веселиться, играя в Wordle.\n\nВсе возможности доступны из меню комманд. Например, чтобы узнать правила, есть комманда /rules. А чтобы начать игру комманда /play",
+            reply_markup=markup)
+
+    def rules_command(self, message: telebot.types.Message) -> None:
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
         markup.add(button)
-        self.send_message(
-            message.from_user.id,
-            "Добро пожаловать в наш телеграмм бот! Здесь вы можете играть в игру Worlde. Вам нужно угадать слово из 5 букв. Чтобы начать игру, нажмите на кнопку /play",
-            reply_markup=markup)
-        self.send_message(
-            message.from_user.id, """Обозначения: 
-⬛️ - буква не входит в слово, 
-🟨 - буква есть в слове, но не в этой позиции, 
-🟩 - буква есть в слове и в этой позиции"""
-        )
+        self.send_message(message.chat.id, "Правила простые! Вам нужно угадать слово из 5 букв. На это дается 6 попыток. Буквы в неправильных словах будут подсвечиваться, чтобы было проще отгадать нужное.\n\n⬛️ - Буква не входит в слово\n🟨 - Буква есть в слове, но не в этой позиции\n🟩 - Буква есть в слове и в этой позиции\n\nСыграем? /play", reply_markup=markup)
 
     def play_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда запуск игры и настройка игры """
+        markup = telebot.types.ReplyKeyboardRemove()
         with open("data.txt", "r") as f:
             data = f.read()
             items: List[str] = data[1:-1].split(',')
@@ -59,9 +72,8 @@ class WordlyBot(telebot.TeleBot):
         self.list_of_words = items
         
         self.send_message(
-            message.from_user.id,
-            "слово загадано! у вас есть 6 попыток, чтобы угадать его. напишите слово:"
-        )
+            message.chat.id,
+            "Cлово загадано! у вас есть 6 попыток, удачи!", reply_markup=markup)
 
 
     def process_text_message(self, message: telebot.types.Message) -> None:
@@ -70,22 +82,27 @@ class WordlyBot(telebot.TeleBot):
         message_text: str = message.text.lower()
         self.Slovar[id][1] = "'" + message_text + "'"
         if self.Slovar[id][0] == "":
-            self.send_message(message.from_user.id, "Игра еще не началась! Напишите /play")
-        elif self.Slovar[id][1] == 6:
-            self.send_message(message.from_user.id, "Игра окончена! Чтобы начать заново, нажмите на кнопку /play")
+            self.send_message(message.chat.id, "Извините, но я не понимаю этот запрос. Чтобы узнать правила, напишите /rules. А чтобы начать игру напишите /play")
+        elif self.Slovar[id][2] == 6:
+            self.send_message(message.chat.id, "Игра окончена! Чтобы начать заново, нажмите на кнопку /play")
+        elif len(message_text) != 5:
+            self.send_message(message.chat.id, "Введите слово из 5 букв!")
         elif self.Slovar[id][1] not in self.list_of_words:
-            self.send_message(message.from_user.id, "Введите существующее слово из 5 букв!")
+            self.send_message(message.chat.id, "Я не знаю этого слова. Введите другое пожалуйста!")
         elif message_text in self.Slovar[id][9]:
-            self.send_message(message.from_user.id, "Вы уже писали это слово, выберите другое")
+            self.send_message(message.chat.id, "Вы уже писали это слово, выберите другое")
         elif message_text == self.Slovar[id][0]:
+            markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+            button = telebot.types.KeyboardButton("/play")
+            markup.add(button)
             for i in message_text:
                 self.Slovar[id][6][self.Slovar[id][7]][self.Slovar[id][8]][0] = i
                 self.Slovar[id][6][self.Slovar[id][7]][self.Slovar[id][8]][1] = 2
                 self.Slovar[id][8] += 1
             svg_grid(self.Slovar[id][6])
             img: Image = open('output.png', 'rb')
-            self.send_photo(message.from_user.id, img)
-            self.send_message(message.from_user.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
+            self.send_photo(message.chat.id, img)
+            self.send_message(message.chat.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play", reply_markup=markup)
             self.Slovar[id][2] = 6
         else:
             self.Slovar[id][9].append(message_text)
@@ -156,20 +173,23 @@ class WordlyBot(telebot.TeleBot):
             self.Slovar[id][7] += 1
             svg_grid(self.Slovar[id][6])
             img: Image = open('output.png', 'rb')
-            self.send_photo(message.from_user.id, img)
+            self.send_photo(message.chat.id, img)
             if self.Slovar[id][2] < 5:
-                self.send_message(message.from_user.id,
+                self.send_message(message.chat.id,
                                  "Буквы в слове: " + str(sorted(self.Slovar[id][3]))[1:-1].replace("'", ""))
-                self.send_message(message.from_user.id,
+                self.send_message(message.chat.id,
                                  "Буквы не в слове: " + str(sorted(self.Slovar[id][4]))[1:-1].replace("'", ""))
                 self.send_message(
-                    message.from_user.id,
+                    message.chat.id,
                     "Неиспользованные буквы: " + str(self.Slovar[id][5])[1:-1].replace("'", ""))
             self.Slovar[id][2] += 1
             if self.Slovar[id][2] == 6:
-                self.send_message(message.from_user.id,
-                                 "Вы проиграли! Загаданное слово было: " + self.Slovar[id][0])
-                self.send_message(message.from_user.id,
+                markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+                button = telebot.types.KeyboardButton("/play")
+                markup.add(button)
+                self.send_message(message.chat.id,
+                                 "Вы проиграли! Загаданное слово было: " + self.Slovar[id][0], reply_markup=markup)
+                self.send_message(message.chat.id,
                                  "Чтобы начать заново, нажмите на кнопку /play")
 
 
@@ -177,5 +197,6 @@ class WordlyBot(telebot.TeleBot):
         """ Функция логики работы бота """
         self.register_message_handler(self.start_command, commands=["start"])
         self.register_message_handler(self.play_command, commands=["play"])
+        self.register_message_handler(self.rules_command, commands=["rules"])
         self.register_message_handler(self.process_text_message, content_types=["text"])
         self.polling(none_stop=True, interval=0)
