@@ -4,18 +4,6 @@ from random import *
 from Image import svg_grid
 from typing import List
 
-"""
-self.Slovar[id][0] = self.word
-self.Slovar[id][1] = self.word_for_check
-self.Slovar[id][2] = self.b
-self.Slovar[id][3] = self.letters_in_word
-self.Slovar[id][4] = self.letters_not_in_word
-self.Slovar[id][5] = self.letters_is_not_used
-self.Slovar[id][6] = self.data
-self.Slovar[id][7] = self.d
-self.Slovar[id][8] = self.c
-self.Slovar[id][9] = self.list_of_used_words
-"""
 class WordlyBot(telebot.TeleBot):
     def __init__(self, token: str) -> None:
         super().__init__(token)
@@ -26,16 +14,20 @@ class WordlyBot(telebot.TeleBot):
     def start_command(self, message: telebot.types.Message) -> None:
         """ Функция - команда приветствие пользователя и найстройка интерфейса """
         id = message.chat.id
-        self.Slovar[id] = ["", "", 0, [], [], [
-            "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
-            "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
-            "ы", "ь", "э", "ю", "я"
-        ], [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],], 0, 0, []]
+        self.Slovar[id] = {"word" : "", 
+            "b" : 0, 
+            "letters_in_word" : [], 
+            "letters_not_in_word" : [], 
+            "letters_is_not_used" : ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"],
+            "data" : [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],],
+            "d" : 0,
+            "c" : 0,
+            "list_of_used_words" : []}
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         button = telebot.types.KeyboardButton("/play")
         button2 = telebot.types.KeyboardButton("/rules")
@@ -59,16 +51,20 @@ class WordlyBot(telebot.TeleBot):
             items: List[str] = data[1:-1].split(',')
             word: str = choice(items)
         id = message.chat.id
-        self.Slovar[id] = [f"{word[1:-1]}", "", 0, [], [], [
-            "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м",
-            "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ",
-            "ы", "ь", "э", "ю", "я"
-        ], [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
-                                   [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],], 0, 0, []]
+        self.Slovar[id] = {"word" : f"{word[1:-1]}", 
+            "b" : 0, 
+            "letters_in_word" : [], 
+            "letters_not_in_word" : [], 
+            "letters_is_not_used" : ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"],
+            "data" : [[[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],
+                [[" ", 0], [" ", 0], [" ", 0], [" ", 0], [" ", 0]],],
+            "d" : 0,
+            "c" : 0,
+            "list_of_used_words" : []}
         self.list_of_words = items
         
         self.send_message(
@@ -80,34 +76,29 @@ class WordlyBot(telebot.TeleBot):
         """ Функция логики самой игры """
         id = message.chat.id
         message_text: str = message.text.lower()
-        self.Slovar[id][1] = "'" + message_text + "'"
-        if self.Slovar[id][0] == "":
-            self.send_message(message.chat.id, "Извините, но я не понимаю этот запрос. Чтобы узнать правила, напишите /rules. А чтобы начать игру напишите /play")
-        elif self.Slovar[id][2] == 6:
+        word_for_check = "'" + message_text + "'"
+        if self.Slovar[id]["word"] == "":
+            self.send_message(message.chat.id, "Игра еще не началась! Напишите /play")
+        elif self.Slovar[id]["b"] == 6:
             self.send_message(message.chat.id, "Игра окончена! Чтобы начать заново, нажмите на кнопку /play")
-        elif len(message_text) != 5:
-            self.send_message(message.chat.id, "Введите слово из 5 букв!")
-        elif self.Slovar[id][1] not in self.list_of_words:
-            self.send_message(message.chat.id, "Я не знаю этого слова. Введите другое пожалуйста!")
-        elif message_text in self.Slovar[id][9]:
+        elif word_for_check not in self.list_of_words:
+            self.send_message(message.chat.id, "Введите существующее слово из 5 букв!")
+        elif message_text in self.Slovar[id]["list_of_used_words"]:
             self.send_message(message.chat.id, "Вы уже писали это слово, выберите другое")
-        elif message_text == self.Slovar[id][0]:
-            markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-            button = telebot.types.KeyboardButton("/play")
-            markup.add(button)
+        elif message_text == self.Slovar[id]["word"]:
             for i in message_text:
-                self.Slovar[id][6][self.Slovar[id][7]][self.Slovar[id][8]][0] = i
-                self.Slovar[id][6][self.Slovar[id][7]][self.Slovar[id][8]][1] = 2
-                self.Slovar[id][8] += 1
-            svg_grid(self.Slovar[id][6])
+                self.Slovar[id]["data"][self.Slovar[id]["d"]][self.Slovar[id]["c"]][0] = i
+                self.Slovar[id]["data"][self.Slovar[id]["d"]][self.Slovar[id]["c"]][1] = 2
+                self.Slovar[id]["c"] += 1
+            svg_grid(self.Slovar[id]["data"])
             img: Image = open('output.png', 'rb')
             self.send_photo(message.chat.id, img)
-            self.send_message(message.chat.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play", reply_markup=markup)
-            self.Slovar[id][2] = 6
+            self.send_message(message.chat.id, "Поздравляем! Вы угадали слово! Чтобы начать заново, нажмите на кнопку /play")
+            self.b = 6
         else:
-            self.Slovar[id][9].append(message_text)
-            s: List[str] = list(self.Slovar[id][0])
-            s2: List[str] = list(self.Slovar[id][0])
+            self.Slovar[id]["list_of_used_words"].append(message_text)
+            s: List[str] = list(self.Slovar[id]["word"])
+            s2: List[str] = list(self.Slovar[id]["word"])
             green1: int = 0
             yellow1: int = 0
             green2: int = 0
@@ -115,80 +106,77 @@ class WordlyBot(telebot.TeleBot):
             Checked_Word1: List[str, int] = []
             Checked_Word2: List[str, int] = []
             for i in message_text:
-                if i in s and self.Slovar[id][0].index(i) == message_text.index(i):
+                if i in s and self.Slovar[id]["word"].index(i) == message_text.index(i):
                     Checked_Word1.append([i, 2])
-                    if i not in self.Slovar[id][3]:
-                        self.Slovar[id][3].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
                     s.remove(i)
                     green1 += 1
                 elif i in s:
                     Checked_Word1.append([i, 1])
-                    if i not in self.Slovar[id][3]:
-                        self.Slovar[id][3].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
                     s.remove(i)
                     yellow1 += 1
                 else:
                     Checked_Word1.append([i, 0])
-                    if i not in self.Slovar[id][4] and i not in self.Slovar[id][3]:
-                        self.Slovar[id][4].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_not_in_word"] and i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_not_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
             message_text2: str = message_text[::-1]
-            word2: str = self.Slovar[id][0][::-1]
+            word2: str = self.Slovar[id]["word"][::-1]
             for i in message_text2:
                 if i in s2 and word2.index(i) == message_text2.index(i):
                     Checked_Word2.append([i, 2])
-                    if i not in self.Slovar[id][3]:
-                        self.Slovar[id][3].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
                     s2.remove(i)
                     green2 += 1
                 elif i in s:
                     Checked_Word2.append([i, 1])
-                    if i not in self.Slovar[id][3]:
-                        self.Slovar[id][3].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
                     s2.remove(i)
                     yellow2 += 1
                 else:
                     Checked_Word2.append([i, 0])
-                    if i not in self.Slovar[id][4] and i not in self.Slovar[id][3]:
-                        self.Slovar[id][4].append(i)
-                    if i in self.Slovar[id][5]:
-                        self.Slovar[id][5].remove(i)
+                    if i not in self.Slovar[id]["letters_not_in_word"] and i not in self.Slovar[id]["letters_in_word"]:
+                        self.Slovar[id]["letters_not_in_word"].append(i)
+                    if i in self.Slovar[id]["letters_is_not_used"]:
+                        self.Slovar[id]["letters_is_not_used"].remove(i)
             if green1 > green2:
-                self.Slovar[id][6][self.Slovar[id][7]] = Checked_Word1
+                self.Slovar[id]["data"][self.Slovar[id]["d"]] = Checked_Word1
             elif green1 < green2:
-                self.Slovar[id][6][self.Slovar[id][7]] = Checked_Word2[::-1]
+                self.Slovar[id]["data"][self.Slovar[id]["d"]] = Checked_Word2[::-1]
             elif yellow1 >= yellow2:
-                self.Slovar[id][6][self.Slovar[id][7]] = Checked_Word1
+                self.Slovar[id]["data"][self.Slovar[id]["d"]] = Checked_Word1
             else:
-                self.Slovar[id][6][self.Slovar[id][7]] = Checked_Word2[::-1]
-            self.Slovar[id][7] += 1
-            svg_grid(self.Slovar[id][6])
+                self.Slovar[id]["data"][self.Slovar[id]["d"]] = Checked_Word2[::-1]
+            self.Slovar[id]["d"] += 1
+            svg_grid(self.Slovar[id]["data"])
             img: Image = open('output.png', 'rb')
             self.send_photo(message.chat.id, img)
-            if self.Slovar[id][2] < 5:
+            if self.Slovar[id]["b"] < 5:
                 self.send_message(message.chat.id,
-                                 "Буквы в слове: " + str(sorted(self.Slovar[id][3]))[1:-1].replace("'", ""))
+                                 "Буквы в слове: " + str(sorted(self.Slovar[id]["letters_in_word"]))[1:-1].replace("'", ""))
                 self.send_message(message.chat.id,
-                                 "Буквы не в слове: " + str(sorted(self.Slovar[id][4]))[1:-1].replace("'", ""))
+                                 "Буквы не в слове: " + str(sorted(self.Slovar[id]["letters_not_in_word"]))[1:-1].replace("'", ""))
                 self.send_message(
                     message.chat.id,
-                    "Неиспользованные буквы: " + str(self.Slovar[id][5])[1:-1].replace("'", ""))
-            self.Slovar[id][2] += 1
-            if self.Slovar[id][2] == 6:
-                markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-                button = telebot.types.KeyboardButton("/play")
-                markup.add(button)
+                    "Неиспользованные буквы: " + str(self.Slovar[id]["letters_is_not_used"])[1:-1].replace("'", ""))
+            self.Slovar[id]["b"] += 1
+            if self.Slovar[id]["b"] == 6:
                 self.send_message(message.chat.id,
-                                 "Вы проиграли! Загаданное слово было: " + self.Slovar[id][0], reply_markup=markup)
+                                 "Вы проиграли! Загаданное слово было: " + self.Slovar[id]["word"])
                 self.send_message(message.chat.id,
                                  "Чтобы начать заново, нажмите на кнопку /play")
 
