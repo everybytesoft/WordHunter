@@ -1,0 +1,4 @@
+pyTelegramBotAPI==4.27.0
+aiogram==3.28.2
+cairosvg==2.9.0
+cairocffi==1.7.1
